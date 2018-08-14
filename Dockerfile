@@ -15,7 +15,8 @@ RUN add-apt-repository \
 RUN apt-get update \
     && apt-get install -y docker-ce
 
-RUN curl -L --fail https://github.com/docker/compose/releases/download/1.22.0/run.sh -o /usr/local/bin/docker-compose \
+RUN COMPOSE_VERSION=`git ls-remote https://github.com/docker/compose | grep refs/tags | grep -oP "[0-9]+\.[0-9][0-9]+\.[0-9]+$" | tail -n 1` \
+    && sh -c "curl -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose" \
     && chmod +x /usr/local/bin/docker-compose
 
 RUN apt-get purge -y apt-transport-https software-properties-common \
