@@ -15,7 +15,7 @@ RUN add-apt-repository \
 RUN apt-get update \
     && apt-get install -y docker-compose
 
-RUN apt-get purge -y apt-transport-https ca-certificates curl software-properties-common \
+RUN apt-get purge -y apt-transport-https software-properties-common \
 	&& apt-get --purge -y autoremove \
 	&& apt-get autoclean \
 	&& apt-get clean \
