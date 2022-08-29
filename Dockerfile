@@ -1,27 +1,12 @@
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
-RUN apt-get update \
-	&& apt-get dist-upgrade -y
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG C.UTF-8
 
-RUN apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+COPY install_docker.sh /opt/install_docker.sh
 
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+RUN bash /opt/install_docker.sh
 
-RUN add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-    $(lsb_release -cs) \
-    stable"
-
-RUN apt-get update \
-    && apt-get install -y docker-ce
-
-
-RUN COMPOSE_VERSION=`curl --silent "https://api.github.com/repos/docker/compose/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'` \
-    && sh -c "curl -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose" \
+RUN COMPOSE_VERSION="$(curl --silent "https://api.github.com/repos/docker/compose/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')" \
+    && sh -c "curl -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/docker-compose" \
     && chmod +x /usr/local/bin/docker-compose
-
-RUN apt-get purge -y apt-transport-https software-properties-common \
-	&& apt-get --purge -y autoremove \
-	&& apt-get autoclean \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/*
