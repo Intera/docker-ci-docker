@@ -28,8 +28,8 @@ jobs:
             intera/ci-docker
             intera/docker-ci-docker
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}},priority=800
-            type=ref,event=branch,enable=true,priority=600
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=ref,event=branch,enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
 
       - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'
